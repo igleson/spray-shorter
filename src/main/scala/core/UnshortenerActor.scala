@@ -1,11 +1,11 @@
 package core
 
 import akka.actor.Actor
-import core.ShortenerActor._
+import core.UnshortenerActor._
 
-class ShortenerActor extends Actor {
+class UnshortenerActor extends Actor {
 
-  import core.ShortenerActor.Short
+  import core.UnshortenerActor.Short
 
   override def receive: Receive = {
     case Short(url) if url == null || url.isEmpty => sender ! NotShorted("Invalid URL")
@@ -21,7 +21,7 @@ class ShortenerActor extends Actor {
   }
 }
 
-object ShortenerActor {
+object UnshortenerActor {
 
   case class Short(longUrl: String)
   case class Unshort(longUrl: String)
