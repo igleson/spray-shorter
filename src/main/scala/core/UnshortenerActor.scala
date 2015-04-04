@@ -6,8 +6,8 @@ import core.UnshortenerActor._
 class UnshortenerActor extends Actor {
 
   override def receive: Receive = {
-    case Unshort(url) if url == null || url.isEmpty => sender ! Left(NotUnshorted("Invalid URL"))
-    case Unshort(url) => sender ! Right(Unshorted(id = s"shorted: $url", longUrl = url))
+    case Unshort(url) if url == null || url.isEmpty => sender ! Left(NotUnshorted)
+    case Unshort(url) => sender ! Right(Unshorted(id = url, longUrl = "<UNSHORTED URL>"))
   }
 }
 
@@ -17,6 +17,6 @@ object UnshortenerActor {
 
   case class Unshorted(id: String, longUrl: String, status: String = "OK")
 
-  case class NotUnshorted(feedbackMessage: String, status: String = "BadRequest")
+  case class NotUnshorted(feedbackMessage: String = "URL cannot be empty", status: String = "BadRequest")
 
 }

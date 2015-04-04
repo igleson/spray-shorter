@@ -9,9 +9,10 @@ trait Api extends RouteConcatenation {
 
   private implicit val _ = system.dispatcher
 
-  lazy val unshortenerService = new ShortenerService(unshortener)
+  lazy val unshortenerService = new UnshortenerService(unshortener)
+  lazy val shortenerService = new ShortenerService(shortener)
 
-  val routes = unshortenerService.unshortRoute
+  val routes = unshortenerService.unshortRoute ~ shortenerService.shortRoute
 
   val rootService = system.actorOf(Props(new RoutedHttpService(routes)))
 }
