@@ -10,7 +10,7 @@ trait Core {
 trait CoreActors {
   this: Core =>
 
-  val shortener = system.actorOf(Props[ShortenerActor])
+  val unshortener = system.actorOf(Props[UnshortenerActor])
 }
 
 trait BootedCore extends Core {
