@@ -14,7 +14,7 @@ JsonFormatsHelpers {
 
   implicit val timeout = Timeout(2.seconds)
 
-  val shortRoute = path("short") {
+  val shortRoute = path("encurte" / "url") {
     post {
       handleWith { short: Short =>
         (shortener ? short).mapTo[Either[NotShorted, Shorted]]

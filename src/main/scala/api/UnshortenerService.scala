@@ -14,7 +14,7 @@ JsonFormatsHelpers {
 
   implicit val timeout = Timeout(2.seconds)
 
-  def unshortRoute = path("unshort") {
+  def unshortRoute = path("url") {
     get {
       parameter("shortUrl".as[String]) { shortUrl =>
         complete {
