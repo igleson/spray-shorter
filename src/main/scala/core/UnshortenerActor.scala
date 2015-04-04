@@ -15,6 +15,8 @@ object UnshortenerActor {
 
   case class Unshort(longUrl: String)
 
-  case class Unshorted(id: String, longUrl: String)
-  case class NotUnshorted(feedbackMessage: String)
+  case class Unshorted(id: String, longUrl: String, status: String = "OK")
+
+  case class NotUnshorted(feedbackMessage: String, status: String = "BadRequest")
+
 }

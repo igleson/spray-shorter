@@ -1,10 +1,11 @@
 package api
 
+import core.UnshortenerActor.{NotUnshorted, Unshorted, Unshort}
+import spray.http.StatusCodes
 import spray.httpx.SprayJsonSupport
-import spray.httpx.marshalling.MetaMarshallers
+import spray.httpx.marshalling.{CollectingMarshallingContext, Marshaller, MetaMarshallers}
 import spray.json._
 
-import scala.reflect.ClassTag
 
 /**
  * Contains useful JSON formats: ``j.u.Date``, ``j.u.UUID`` and others; it is useful
@@ -13,14 +14,34 @@ import scala.reflect.ClassTag
  */
 trait DefaultJsonFormats extends DefaultJsonProtocol with SprayJsonSupport with MetaMarshallers {
 
-  /**
-   * Computes ``RootJsonFormat`` for type ``A`` if ``A`` is object
-   */
-  def jsonObjectFormat[A: ClassTag]: RootJsonFormat[A] = new RootJsonFormat[A] {
-    val ct = implicitly[ClassTag[A]]
+  implicit def string2JsString(str: String) = JsString(str)
 
-    def write(obj: A): JsValue = JsObject("value" -> JsString(ct.runtimeClass.getSimpleName))
+  implicit val unshortFormat = jsonFormat1(Unshort)
 
-    def read(json: JsValue): A = ct.runtimeClass.newInstance().asInstanceOf[A]
+  implicit val unshortedFormat = new RootJsonFormat[Unshorted] {
+    def write(unshorted: Unshorted): JsValue = JsObject("id" -> unshorted.id,
+                                                         "longUrl" -> unshorted.longUrl,
+                                                         "status" -> unshorted.status)
+
+    def read(json: JsValue) = null
   }
+  implicit val notUnshortedFormat = new RootJsonFormat[NotUnshorted] {
+    def write(notUnshorted: NotUnshorted): JsValue = JsObject("feedbackMessage" -> notUnshorted.feedbackMessage,
+                                                               "status" -> notUnshorted.status)
+
+    def read(json: JsValue) = null
+  }
+
+
+  implicit def errorSelectingEitherMarshaller[A, B](implicit ma: Marshaller[A], mb: Marshaller[B]) =
+    Marshaller[Either[A, B]] {
+      (value, ctx) => value match {
+        case Left(a) => {
+          val mc = new CollectingMarshallingContext()
+          ma(a, mc)
+          ctx.handleError(ErrorResponseException(StatusCodes.BadRequest, mc.entity))
+        }
+        case Right(b) => mb(b, ctx)
+      }
+    }
 }
