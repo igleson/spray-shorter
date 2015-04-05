@@ -12,7 +12,7 @@ import scala.concurrent.duration._
 class UnshortenerService(unshortener: ActorRef)(implicit executionContext: ExecutionContext) extends Directives with
 JsonFormatsHelpers {
 
-  implicit val timeout = Timeout(4.seconds)
+  implicit val timeout = Timeout(2.seconds)
 
   def unshortRoute = path("url") {
     get {
