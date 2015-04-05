@@ -14,7 +14,7 @@ trait ConfigCassandraCluster extends CassandraCluster with BootedCore{
   private val port = cassandraConfig.getInt("port")
   private val hosts = cassandraConfig.getStringList("hosts").toList
 
-  implicit lazy val cluster: Cluster =
+  implicit val cluster: Cluster =
     Cluster.builder().
     addContactPoints(hosts: _*).
     withCompression(ProtocolOptions.Compression.SNAPPY).
