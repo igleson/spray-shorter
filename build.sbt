@@ -23,7 +23,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka"      %% "akka-testkit"          % "2.2.0"           % "test",
   "com.novocode"            % "junit-interface"       % "0.7"             % "test->default",
   "com.datastax.cassandra"  % "cassandra-driver-core" % "2.1.1" exclude("org.xerial.snappy", "snappy-java"),
-  "org.xerial.snappy"       % "snappy-java"           % "1.1.1.3"
+  "org.xerial.snappy"       % "snappy-java"           % "1.1.1.3",
+  "com.github.tototoshi"   %% "scala-base62"          % "0.1.0"
 )
 
 scalacOptions ++= Seq(

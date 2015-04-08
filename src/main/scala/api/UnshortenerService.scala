@@ -12,13 +12,18 @@ import scala.concurrent.duration._
 class UnshortenerService(unshortener: ActorRef)(implicit executionContext: ExecutionContext) extends Directives with
 JsonFormatsHelpers {
 
-  implicit val timeout = Timeout(2.seconds)
+  implicit val timeout = Timeout(10 seconds)
 
   def unshortRoute = path("url") {
     get {
       parameter("shortUrl".as[String]) { shortUrl =>
         complete {
-          (unshortener ? Unshort(shortUrl)).mapTo[Either[NotUnshorted, Unshorted]]
+          val host = "http://localhost:9000/"
+          val url = shortUrl.substring(host.length, shortUrl.length)
+          println("\n\n\n\n\n\n\n\n\n\n\n")
+          println(url)
+          println("\n\n\n\n\n\n\n\n\n\n\n")
+          (unshortener ? Unshort(url)).mapTo[Either[NotUnshorted, Unshorted]]
         }
       }
     }

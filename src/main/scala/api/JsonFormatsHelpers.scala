@@ -2,10 +2,11 @@ package api
 
 import core.UnshortenerActor.{NotUnshorted, Unshorted, Unshort}
 import core.ShortenerActor.{NotShorted, Shorted, Short}
-import spray.http.StatusCodes
+import spray.http.{StatusCode, StatusCodes}
 import spray.httpx.SprayJsonSupport
 import spray.httpx.marshalling.{CollectingMarshallingContext, Marshaller, MetaMarshallers}
 import spray.json._
+import core.ShortenerActor.NotShorted
 
 
 /**
@@ -49,21 +50,19 @@ trait JsonFormatsHelpers extends DefaultJsonProtocol with SprayJsonSupport with 
     Marshaller[Either[A, B]] {
       (value, ctx) => value match {
         case Left(a) => {
-          {
-            {
-              {
-                {
-                  {
-                    val mc = new CollectingMarshallingContext()
-                    ma(a, mc)
-                    ctx.handleError(ErrorResponseException(StatusCodes.BadRequest, mc.entity))
-                  }
-                }
-              }
-            }
-          }
+          val mc = new CollectingMarshallingContext()
+          ma(a, mc)
+
+          ctx.handleError(ErrorResponseException(a, mc.entity))
         }
         case Right(b) => mb(b, ctx)
       }
     }
+
+  implicit def any2StatusCode(obj: Any) : StatusCode = obj match {
+    case n : NotShorted if n.status equals "BadRequest" => StatusCodes.BadRequest
+    case n : NotShorted if n.status equals "Not Found" => StatusCodes.NotFound
+    case n : NotUnshorted if n.status equals "BadRequest" => StatusCodes.BadRequest
+    case n : NotUnshorted if n.status equals "Not Found" => StatusCodes.NotFound
+  }
 }

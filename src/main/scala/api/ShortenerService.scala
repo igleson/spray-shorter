@@ -12,13 +12,11 @@ import scala.concurrent.duration._
 class ShortenerService(shortener: ActorRef)(implicit executionContext: ExecutionContext) extends Directives with
 JsonFormatsHelpers {
 
-  implicit val timeout = Timeout(2.seconds)
+  implicit val timeout = Timeout(10 seconds)
 
   val shortRoute = path("encurte" / "url") {
     post {
-      handleWith { short: Short =>
-        (shortener ? short).mapTo[Either[NotShorted, Shorted]]
-      }
+        handleWith { short: Short => (shortener ? short).mapTo[Either[NotShorted, Shorted]] }
     }
   }
 }
