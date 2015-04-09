@@ -20,9 +20,6 @@ JsonFormatsHelpers {
         complete {
           val host = "http://localhost:9000/"
           val url = shortUrl.substring(host.length, shortUrl.length)
-          println("\n\n\n\n\n\n\n\n\n\n\n")
-          println(url)
-          println("\n\n\n\n\n\n\n\n\n\n\n")
           (unshortener ? Unshort(url)).mapTo[Either[NotUnshorted, Unshorted]]
         }
       }
